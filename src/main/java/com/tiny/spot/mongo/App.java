@@ -1,5 +1,6 @@
 package com.tiny.spot.mongo;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,22 +35,22 @@ public class App {
 			MongoDatabase mongoDatabase = mongoClient.getDatabase("mycol");
 			// mongoDatabase.createCollection("test");
 			MongoCollection<Document> collection = mongoDatabase.getCollection("test");
-			System.out.println("集合 test 选择成功");
 			// 插入文档
 			/**
 			 * 1. 创建文档 org.bson.Document 参数为key-value的格式 2. 创建文档集合List<Document> 3.
 			 * 将文档集合插入数据库集合中 mongoCollection.insertMany(List<Document>) 插入单个文档可以用
 			 * mongoCollection.insertOne(Document)
 			 */
+			MongoCollection<Document> proxy = (MongoCollection<Document>) Proxy.newProxyInstance(
+					Thread.currentThread().getContextClassLoader(), new Class<?>[] { MongoCollection.class },
+					new MongoInvocationHandler(collection));
 			Document document = new Document("title", "MongoDB").append("description", "database").append("likes", 100)
 					.append("by", "Fly");
-			collection.insertOne(document);
-			System.out.println(document.get("_id"));
+			// collection.insertOne(document);
 			List<Document> documents = new ArrayList<Document>();
 			documents.add(document);
 			// collection.insertMany(documents);
-			System.out.println("文档插入成功");
-			FindIterable<Document> tiFindIterable = collection.find(Filters.eq("title", "MongoDB"));
+			FindIterable<Document> tiFindIterable = proxy.find(Filters.eq("title", "MongoDB"));
 			MongoCursor<Document> iCursor = tiFindIterable.iterator();
 			while (iCursor.hasNext()) {
 				Document doc = iCursor.next();
