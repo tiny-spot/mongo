@@ -10,7 +10,7 @@ public class Consumer {
 				new String[] { "dubbo-consumer.xml" });
 		context.start();
 		DemoService demoService = (DemoService) context.getBean("demoService"); //
-		String hello = demoService.sayHai("tom"); // ִ
+		String hello = demoService.sayHai("hi"); // ִ
 		System.out.println(hello); //
 	}
 

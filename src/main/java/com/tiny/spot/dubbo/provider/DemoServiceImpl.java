@@ -7,6 +7,9 @@ public class DemoServiceImpl implements DemoService {
 
 	@Override
 	public String sayHai(String name) {
+		if ("hi".equals(name)) {
+			throw new RuntimeException("Error");
+		}
 		return "hello" + name;
 	}
 
